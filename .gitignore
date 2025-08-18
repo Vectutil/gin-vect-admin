@@ -1,0 +1,9 @@
+temp/
+test/
+go_build_jz_scaffold.exe
+cache
+docs
+nul
+*.exe
+.idea
+.vscode

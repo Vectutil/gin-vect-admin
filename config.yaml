@@ -1,0 +1,56 @@
+mysql:
+  host: "127.0.0.1"
+  port: 3306
+  user: "root"
+  password: "123456"
+  database: "vect"
+
+redis:
+  host: "114.132.245.76"
+  port: 6379
+  password: "123456"
+  db: 0
+
+rabbitmq:
+  host: "47.112.109.63"
+  port: 5672
+  user: "admin"
+  password: "breelk"
+  name:
+    delayTest: "delay.test"
+
+wxRobot:
+  errorRobot: "https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=cedaa47c-a156-4a8b-a4c9-xxxx"
+
+fsRobot:
+  errorRobot: "https://open.feishu.cn/open-apis/bot/v2/hook/2f8e0477-44d5-4172-becc-xxxx"
+  stockRobot: "https://open.feishu.cn/open-apis/bot/v2/hook/c491a832-4705-4773-9ae4-xxxx"
+  newsRobot: "https://open.feishu.cn/open-apis/bot/v2/hook/352cff98-51cd-48ab-a523-xxxx"
+
+qny:
+  accessKey: "ciIHqTlKU1AjyJK6kb4LCXlLzxxxxxxxxxx"
+  secretKey: "7iomzYL4h2ytAZxCTStNPDvY4xxxxxxxxx"
+  bucket: "woorho"
+  qnyServer: "https://xxxxxxx.fun"
+
+aliyun:
+
+system:
+  # 应用名称
+  name: "vect"
+  # 应用版本
+  version: "1.0.0"
+  port: 3101
+  migration: true
+  chrome: "msedge.exe"
+  env: "dev"
+#  env: "release"
+
+job:
+  jobStatus:
+    examplejob: false
+#    crawlerfutunn: true
+
+  jobCron:
+    examplejob: "*/10 * * * * *"
+#    crawlerfutunn: ""
