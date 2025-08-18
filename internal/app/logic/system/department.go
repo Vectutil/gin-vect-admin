@@ -97,12 +97,12 @@ func (l *DepartmentLogic) GetList(ctx context.Context, req *systype.DepartmentQu
 
 	// 构建响应
 	resp := &systype.DepartmentDataListResp{
-		Total: total,
-		List:  make([]systype.DepartmentDataResp, 0, len(depts)),
+		Total:   total,
+		Records: make([]systype.DepartmentDataResp, 0, len(depts)),
 	}
 
 	for _, dept := range depts {
-		resp.List = append(resp.List, systype.DepartmentDataResp{
+		resp.Records = append(resp.Records, systype.DepartmentDataResp{
 			Id:       dept.Id,
 			DeptName: dept.Name,
 			//TenantId:  dept.TenantId,

@@ -286,11 +286,11 @@ func (l *userLogic) GetList(ctx context.Context, req *systype.UserQueryReq) (*sy
 		})
 	}
 	res := &systype.UserDataListResp{
-		List: list,
+		Records: list,
 		ListResp: common.ListResp{
-			Total:    total,
-			Page:     req.Page,
-			PageSize: req.PageSize,
+			Total:   total,
+			Current: req.Page,
+			Size:    req.PageSize,
 		},
 	}
 	res.TotalPage = res.GetTotalPage()

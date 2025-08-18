@@ -109,5 +109,5 @@ type UserDataResp struct {
 
 type UserDataListResp struct {
 	common.ListResp
-	List []*UserDataResp `json:"list"`
+	Records []*UserDataResp `json:"records"`
 }

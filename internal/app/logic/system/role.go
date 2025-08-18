@@ -104,12 +104,12 @@ func (l *RoleLogic) GetList(ctx context.Context, req *systype.RoleQueryReq) (*sy
 
 	// 构建响应
 	resp := &systype.RoleDataListResp{
-		Total: total,
-		List:  make([]systype.RoleDataResp, 0, len(roles)),
+		Total:   total,
+		Records: make([]systype.RoleDataResp, 0, len(roles)),
 	}
 
 	for _, role := range roles {
-		resp.List = append(resp.List, systype.RoleDataResp{
+		resp.Records = append(resp.Records, systype.RoleDataResp{
 			Id:          role.Id,
 			Name:        role.Name,
 			Code:        role.Code,

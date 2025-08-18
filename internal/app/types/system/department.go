@@ -49,8 +49,8 @@ type DepartmentDataResp struct {
 // DepartmentDataListResp 部门列表响应
 type DepartmentDataListResp struct {
 	common.ListResp
-	Total int64                `json:"total"` // 总数
-	List  []DepartmentDataResp `json:"list"`  // 列表
+	Total   int64                `json:"total"`   // 总数
+	Records []DepartmentDataResp `json:"records"` // 列表
 }
 
 // DepartmentQueryReq 部门查询请求

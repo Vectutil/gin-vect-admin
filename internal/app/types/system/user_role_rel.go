@@ -31,6 +31,6 @@ type UserRoleRelDataResp struct {
 // UserRoleRelDataListResp 用户角色关系列表响应
 type UserRoleRelDataListResp struct {
 	common.ListResp
-	Total int64                 `json:"total"` // 总数
-	List  []UserRoleRelDataResp `json:"list"`  // 列表
+	Total   int64                 `json:"total"`   // 总数
+	Records []UserRoleRelDataResp `json:"records"` // 列表
 }

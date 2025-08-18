@@ -54,8 +54,8 @@ type RoleDataResp struct {
 // RoleDataListResp 角色列表响应
 type RoleDataListResp struct {
 	common.ListResp
-	Total int64          `json:"total"` // 总数
-	List  []RoleDataResp `json:"list"`  // 列表
+	Total   int64          `json:"total"`   // 总数
+	Records []RoleDataResp `json:"records"` // 列表
 }
 
 // RoleQueryReq 角色查询请求

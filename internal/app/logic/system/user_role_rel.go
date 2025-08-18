@@ -89,12 +89,12 @@ func (l *UserRoleRelLogic) GetList(ctx context.Context, req *systype.UserRoleRel
 	}
 
 	resp := &systype.UserRoleRelDataListResp{
-		Total: total,
-		List:  make([]systype.UserRoleRelDataResp, 0, len(rels)),
+		Total:   total,
+		Records: make([]systype.UserRoleRelDataResp, 0, len(rels)),
 	}
 
 	for _, rel := range rels {
-		resp.List = append(resp.List, systype.UserRoleRelDataResp{
+		resp.Records = append(resp.Records, systype.UserRoleRelDataResp{
 			Id: rel.Id,
 			//TenantId: rel.TenantId,
 			UserId: rel.UserId,

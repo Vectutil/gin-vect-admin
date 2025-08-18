@@ -24,24 +24,24 @@ func (l *ListReq) GetOffset() int {
 type ListResp struct {
 	BaseListResp
 	Total     int64 `json:"total"`
-	Page      int   `json:"page"`
-	PageSize  int   `json:"pageSize"`
+	Current   int   `json:"current"`
+	Size      int   `json:"size"`
 	TotalPage int   `json:"totalPage"`
 }
 
 func (l *ListResp) Adjust() {
-	if l.PageSize == 0 {
+	if l.Size == 0 {
 		l.TotalPage = 0
 		return
 	}
-	l.TotalPage = (int(l.Total) + l.PageSize - 1) / l.PageSize
+	l.TotalPage = (int(l.Total) + l.Size - 1) / l.Size
 }
 
 func (l *ListResp) GetTotalPage() int {
-	if l.PageSize == 0 {
+	if l.Size == 0 {
 		return 0
 	}
-	return (int(l.Total) + l.PageSize - 1) / l.PageSize
+	return (int(l.Total) + l.Size - 1) / l.Size
 }
 
 type IdReq struct {
