@@ -16,9 +16,9 @@ import (
 )
 
 type Response struct {
-	Code    int         `json:"code"`           // 业务码
-	Message string      `json:"message"`        // 提示信息
-	Data    interface{} `json:"data,omitempty"` // 数据内容（成功时）
+	Code int         `json:"code"`           // 业务码
+	Msg  string      `json:"msg"`            // 提示信息
+	Data interface{} `json:"data,omitempty"` // 数据内容（成功时）
 }
 
 type qwError struct {
@@ -50,9 +50,9 @@ func (e *appError) Error() string {
 // Success 成功返回
 func Success(ctx *gin.Context, data interface{}) {
 	ctx.JSON(http.StatusOK, Response{
-		Code:    0,
-		Message: "success",
-		Data:    data,
+		Code: http.StatusOK,
+		Msg:  "success",
+		Data: data,
 	})
 }
 
@@ -90,8 +90,8 @@ func Error(ctx *gin.Context, err *error, code int, msg interface{}) {
 	robot.CallQWAssistant(ctx, markdown, robot.QWRobotMsgTypeText)
 
 	ctx.JSON(http.StatusOK, Response{
-		Code:    code,
-		Message: fmt.Sprintf("%v", qerr.Msg),
+		Code: code,
+		Msg:  fmt.Sprintf("%v", qerr.Msg),
 	})
 }
 
