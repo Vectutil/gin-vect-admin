@@ -43,7 +43,7 @@ func (h *UserHandler) Create(c *gin.Context) {
 
 	defer func() {
 		commit(err)
-		response.HandleDefault(c, res)(&err)
+		response.HandleDefault(c, res)(&err, recover())
 	}()
 
 	if err = c.ShouldBindJSON(&req); err != nil {
@@ -83,7 +83,7 @@ func (h *UserHandler) Update(c *gin.Context) {
 
 	defer func() {
 		commit(err)
-		response.HandleDefault(c, res)(&err)
+		response.HandleDefault(c, res)(&err, recover())
 	}()
 
 	if err = c.ShouldBindJSON(&req); err != nil {
@@ -119,7 +119,7 @@ func (h *UserHandler) Delete(c *gin.Context) {
 
 	defer func() {
 		commit(err)
-		response.HandleDefault(c, res)(&err)
+		response.HandleDefault(c, res)(&err, recover())
 	}()
 
 	if err = c.ShouldBindJSON(req); err != nil {
@@ -151,7 +151,7 @@ func (h *UserHandler) GetById(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err)
+		response.HandleDefault(c, res)(&err, recover())
 	}()
 
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
@@ -187,7 +187,7 @@ func (h *UserHandler) List(c *gin.Context) {
 
 	defer func() {
 		commit(err)
-		response.HandleListDefault(c, res)(&err)
+		response.HandleListDefault(c, res)(&err, recover())
 	}()
 
 	err = response.ShouldBindForList(c, &req)

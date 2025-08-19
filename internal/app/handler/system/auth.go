@@ -43,7 +43,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err)
+		response.HandleDefault(c, res)(&err, recover())
 	}()
 
 	if err = c.ShouldBindJSON(&req); err != nil {
@@ -135,7 +135,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err)
+		response.HandleDefault(c, res)(&err, recover())
 	}()
 
 	if err = c.ShouldBindJSON(&req); err != nil {

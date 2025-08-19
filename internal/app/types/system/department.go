@@ -49,7 +49,6 @@ type DepartmentDataResp struct {
 // DepartmentDataListResp 部门列表响应
 type DepartmentDataListResp struct {
 	common.ListResp
-	Total   int64                `json:"total"`   // 总数
 	Records []DepartmentDataResp `json:"records"` // 列表
 }
 
@@ -62,9 +61,8 @@ type DepartmentQueryReq struct {
 
 // DepartmentTreeResp 部门树响应
 type DepartmentTreeResp struct {
-	Id       int64  `json:"id"`       // 部门Id
-	DeptName string `json:"deptName"` // 部门名称
-	//TenantId int64                `json:"tenantId"`           // 租户Id
+	Id       int64                `json:"id"`                 // 部门Id
+	DeptName string               `json:"deptName"`           // 部门名称
 	ParentId int64                `json:"parentId"`           // 上级部门Id
 	Status   int8                 `json:"status"`             // 状态：1启用 0禁用
 	Children []DepartmentTreeResp `json:"children,omitempty"` // 子部门

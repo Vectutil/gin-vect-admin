@@ -96,10 +96,10 @@ func Error(ctx *gin.Context, err *error, code int, msg interface{}) {
 }
 
 // HandleDefault ，返回延迟处理函数
-func HandleDefault(ctx *gin.Context, res interface{}) func(*error) {
+func HandleDefault(ctx *gin.Context, res interface{}) func(*error, any) {
 	// 定义延迟处理函数
-	handler := func(err *error) {
-		if r := recover(); r != nil {
+	handler := func(err *error, r any) {
+		if r != nil {
 			*err = errors.New(fmt.Sprintf("%v", r))
 		}
 		if *err != nil {
@@ -120,10 +120,11 @@ func HandleDefault(ctx *gin.Context, res interface{}) func(*error) {
 
 	return handler
 }
-func HandleListDefault(ctx *gin.Context, res common.IBaseListResp) func(*error) {
+
+func HandleListDefault(ctx *gin.Context, res common.IBaseListResp) func(*error, any) {
 	// 定义延迟处理函数
-	handler := func(err *error) {
-		if r := recover(); r != nil {
+	handler := func(err *error, r any) {
+		if r != nil {
 			*err = errors.New(fmt.Sprintf("%v", r))
 		}
 		if *err != nil {

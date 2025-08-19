@@ -42,7 +42,7 @@ func (h *DepartmentHandler) Create(c *gin.Context) {
 
 	defer func() {
 		commit(err)
-		response.HandleDefault(c, res)(&err)
+		response.HandleDefault(c, res)(&err, recover())
 
 	}()
 
@@ -87,7 +87,7 @@ func (h *DepartmentHandler) Update(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err)
+		response.HandleDefault(c, res)(&err, recover())
 	}()
 
 	if err = c.ShouldBindJSON(&req); err != nil {
@@ -124,7 +124,7 @@ func (h *DepartmentHandler) Delete(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err)
+		response.HandleDefault(c, res)(&err, recover())
 	}()
 	if err = c.ShouldBindJSON(&req); err != nil {
 		return
@@ -157,7 +157,7 @@ func (h *DepartmentHandler) GetById(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err)
+		response.HandleDefault(c, res)(&err, recover())
 	}()
 
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
@@ -192,7 +192,8 @@ func (h *DepartmentHandler) List(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleListDefault(c, res)(&err)
+		errHandler := response.HandleListDefault(c, res)
+		errHandler(&err, recover())
 	}()
 
 	err = response.ShouldBindForList(c, &req)
@@ -225,7 +226,7 @@ func (h *DepartmentHandler) GetTree(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err)
+		response.HandleDefault(c, res)(&err, recover())
 	}()
 
 	// 从上下文中获取租户Id

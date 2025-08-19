@@ -97,9 +97,9 @@ func (l *DepartmentLogic) GetList(ctx context.Context, req *systype.DepartmentQu
 
 	// 构建响应
 	resp := &systype.DepartmentDataListResp{
-		Total:   total,
 		Records: make([]systype.DepartmentDataResp, 0, len(depts)),
 	}
+	resp.Total = total
 
 	for _, dept := range depts {
 		resp.Records = append(resp.Records, systype.DepartmentDataResp{
