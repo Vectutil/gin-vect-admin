@@ -17,7 +17,9 @@ type (
 
 // NewUserDao 创建用户DAO实例
 func NewUserDao(db *gorm.DB) *UserDao {
-	return &UserDao{db: db}
+	return &UserDao{
+		db: db,
+	}
 }
 
 // Create 创建用户
