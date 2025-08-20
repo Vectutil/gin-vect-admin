@@ -1,19 +1,56 @@
 package response
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"gin-vect-admin/internal/app/types/common"
-	"gin-vect-admin/pkg/logger"
 	"gin-vect-admin/pkg/robot"
 	"github.com/gin-gonic/gin"
-	"io"
 	"net/http"
 	"runtime/debug"
 	"strings"
 	"time"
 )
+
+type buildConfig struct {
+	data       interface{}
+	sourceData interface{}
+	code       int32
+	msg        string
+	httpCode   int
+	sendErrMsg bool
+}
+
+type BuildOption func(*buildConfig)
+
+func WithData(data interface{}) BuildOption {
+	return func(c *buildConfig) {
+		c.data = data
+	}
+}
+
+func WithErrCode(code int32) BuildOption {
+	return func(c *buildConfig) {
+		c.code = code
+	}
+}
+
+func WithSourceData(data interface{}) BuildOption {
+	return func(c *buildConfig) {
+		c.sourceData = data
+	}
+}
+
+func WithHTTPCode(code int) BuildOption {
+	return func(c *buildConfig) {
+		c.httpCode = code
+	}
+}
+
+func WithSendErrMsg() BuildOption {
+	return func(c *buildConfig) {
+		c.sendErrMsg = true
+	}
+}
 
 type Response struct {
 	Code int         `json:"code"`           // 业务码
@@ -56,27 +93,86 @@ func Success(ctx *gin.Context, data interface{}) {
 	})
 }
 
-// Error 失败返回
-func Error(ctx *gin.Context, err *error, code int, msg interface{}) {
+// HandleDefault ，返回延迟处理函数
+func HandleDefault(ctx *gin.Context, opts ...BuildOption) func(*error, any) {
+	// 定义延迟处理函数
+	handler := func(err *error, r any) {
+		conf := &buildConfig{}
 
-	stack := Stack(*err)
-	t := time.Now().UnixNano()
-
-	qerr := qwError{
-		TimeStamp: t,
-		Code:      code,
-		Api:       ctx.Request.URL.Path,
-		Msg:       fmt.Sprintf("%+v", msg),
-		Stack:     stack,
+		if opts != nil {
+			for _, opt := range opts {
+				opt(conf)
+			}
+		}
+		if r != nil {
+			*err = errors.New(fmt.Sprintf("%v", r))
+		}
+		if *err != nil {
+			errVal := fmt.Sprintf("%+v", *err)
+			code := http.StatusInternalServerError
+			var e *appError
+			if errors.As(*err, &e) {
+				code = e.Code()
+				if e.Error() != "" {
+					errVal = e.Error()
+				}
+			}
+			if conf.sendErrMsg {
+				sendErrMsg(ctx, code, err)
+			}
+			ctx.JSON(http.StatusOK, Response{
+				Code: code,
+				Msg:  errVal,
+			})
+			return
+		}
+		if conf.sourceData != nil {
+			Success(ctx, conf.sourceData)
+			return
+		}
+		Success(ctx, conf.data)
 	}
-	body, _ := io.ReadAll(ctx.Request.Body)
-	qerr.Request = string(body)
-	qerr.Msg = fmt.Sprintf("%+v", *err)
 
-	marshal, _ := json.Marshal(qerr)
-	logger.Logger.Error(string(marshal))
+	return handler
+}
 
-	markdown := fmt.Sprintf(`
+//func HandleListDefault(ctx *gin.Context, res common.IBaseListResp) func(*error, any) {
+//	// 定义延迟处理函数
+//	handler := func(err *error, r any) {
+//		if r != nil {
+//			*err = errors.New(fmt.Sprintf("%v", r))
+//		}
+//		if *err != nil {
+//			resValue := fmt.Sprintf("%v", res)
+//			code := http.StatusInternalServerError
+//			var e *appError
+//			if errors.As(*err, &e) {
+//				code = e.Code()
+//				if e.Error() != "" {
+//					resValue = e.Error()
+//				}
+//			}
+//			Error(ctx, err, code, resValue)
+//			return
+//		}
+//		res.Adjust()
+//		Success(ctx, res)
+//	}
+//
+//	return handler
+//}
+
+func Stack(err error) string {
+	stack := string(debug.Stack())
+	// 先替换 \n\t 组合
+	all := ">" + strings.ReplaceAll(stack, "\n\t", "\n>")
+	return all
+}
+
+func sendErrMsg(c *gin.Context, code int, err *error) {
+	stack := Stack(*err)
+	markdown := fmt.Sprintf(
+		`
 ## 🚨 实时新增接口异常，请相关同事注意 \n
 > **时间**：%d  
 > **接口**：%s  
@@ -84,72 +180,7 @@ func Error(ctx *gin.Context, err *error, code int, msg interface{}) {
 > **错误信息**：%v
 
 ### 📚 堆栈：
-%s`,
-		t, ctx.Request.URL.Path, code, qerr.Msg, stack)
+%s`, time.Now().UnixNano(), c.Request.URL.Path, code, fmt.Sprintf("%+v", *err), stack)
 
-	robot.CallQWAssistant(ctx, markdown, robot.QWRobotMsgTypeText)
-
-	ctx.JSON(http.StatusOK, Response{
-		Code: code,
-		Msg:  fmt.Sprintf("%v", qerr.Msg),
-	})
-}
-
-// HandleDefault ，返回延迟处理函数
-func HandleDefault(ctx *gin.Context, res interface{}) func(*error, any) {
-	// 定义延迟处理函数
-	handler := func(err *error, r any) {
-		if r != nil {
-			*err = errors.New(fmt.Sprintf("%v", r))
-		}
-		if *err != nil {
-			resValue := fmt.Sprintf("%v", res)
-			code := http.StatusInternalServerError
-			var e *appError
-			if errors.As(*err, &e) {
-				code = e.Code()
-				if e.Error() != "" {
-					resValue = e.Error()
-				}
-			}
-			Error(ctx, err, code, resValue)
-			return
-		}
-		Success(ctx, res)
-	}
-
-	return handler
-}
-
-func HandleListDefault(ctx *gin.Context, res common.IBaseListResp) func(*error, any) {
-	// 定义延迟处理函数
-	handler := func(err *error, r any) {
-		if r != nil {
-			*err = errors.New(fmt.Sprintf("%v", r))
-		}
-		if *err != nil {
-			resValue := fmt.Sprintf("%v", res)
-			code := http.StatusInternalServerError
-			var e *appError
-			if errors.As(*err, &e) {
-				code = e.Code()
-				if e.Error() != "" {
-					resValue = e.Error()
-				}
-			}
-			Error(ctx, err, code, resValue)
-			return
-		}
-		res.Adjust()
-		Success(ctx, res)
-	}
-
-	return handler
-}
-
-func Stack(err error) string {
-	stack := string(debug.Stack())
-	// 先替换 \n\t 组合
-	all := ">" + strings.ReplaceAll(stack, "\n\t", "\n>")
-	return all
+	robot.CallQWAssistant(c, markdown, robot.QWRobotMsgTypeText)
 }
