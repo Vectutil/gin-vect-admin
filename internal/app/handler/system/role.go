@@ -41,7 +41,7 @@ func (h *RoleHandler) Create(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err, recover())
+		response.HandleDefault(c, response.WithData(res))(&err, recover())
 	}()
 
 	if err = c.ShouldBindJSON(&req); err != nil {
@@ -75,7 +75,7 @@ func (h *RoleHandler) Update(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err, recover())
+		response.HandleDefault(c, response.WithData(res))(&err, recover())
 	}()
 
 	if err = c.ShouldBindJSON(&req); err != nil {
@@ -109,7 +109,7 @@ func (h *RoleHandler) Delete(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err, recover())
+		response.HandleDefault(c, response.WithData(res))(&err, recover())
 	}()
 
 	if err = c.ShouldBindJSON(&req); err != nil {
@@ -141,7 +141,7 @@ func (h *RoleHandler) GetById(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err, recover())
+		response.HandleDefault(c, response.WithData(res))(&err, recover())
 	}()
 
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
@@ -176,7 +176,8 @@ func (h *RoleHandler) List(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleListDefault(c, res)(&err, recover())
+		res.Adjust()
+		response.HandleDefault(c, response.WithData(res))(&err, recover())
 	}()
 
 	err = response.ShouldBindForList(c, &req)

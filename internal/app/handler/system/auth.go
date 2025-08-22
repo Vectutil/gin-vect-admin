@@ -135,7 +135,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err, recover())
+		response.HandleDefault(c, response.WithData(res))(&err, recover())
 	}()
 
 	if err = c.ShouldBindJSON(&req); err != nil {

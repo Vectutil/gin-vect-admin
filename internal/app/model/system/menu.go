@@ -4,6 +4,10 @@ import (
 	"gin-vect-admin/internal/app/model/common"
 )
 
+type MenuTree struct {
+	Tree []*Menu `json:"tree"`
+}
+
 // Menu 菜单/按钮模型
 type Menu struct {
 	common.BaseModel

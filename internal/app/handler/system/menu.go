@@ -42,7 +42,7 @@ func (h *MenuHandler) Create(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err, recover())
+		response.HandleDefault(c, response.WithData(res))(&err, recover())
 	}()
 
 	if err = c.ShouldBindJSON(&req); err != nil {
@@ -82,7 +82,7 @@ func (h *MenuHandler) Update(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err, recover())
+		response.HandleDefault(c, response.WithData(res))(&err, recover())
 	}()
 
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
@@ -126,7 +126,7 @@ func (h *MenuHandler) Delete(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err, recover())
+		response.HandleDefault(c, response.WithData(res))(&err, recover())
 	}()
 
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
@@ -159,7 +159,7 @@ func (h *MenuHandler) GetById(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err, recover())
+		response.HandleDefault(c, response.WithData(res))(&err, recover())
 	}()
 
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
@@ -194,7 +194,7 @@ func (h *MenuHandler) List(c *gin.Context) {
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err, recover())
+		response.HandleDefault(c, response.WithData(res))(&err, recover())
 	}()
 
 	menus, total, err := menuLogic.GetList(c.Request.Context(), req)
@@ -211,15 +211,15 @@ func (h *MenuHandler) GetMenuTree(c *gin.Context) {
 	var (
 		err       error
 		db        = mysql.GetDB()
-		res       []*sysmodel.Menu
+		res       = &sysmodel.MenuTree{}
 		menuLogic = syslogic.NewMenuLogic(db)
 	)
 
 	defer func() {
-		response.HandleDefault(c, res)(&err, recover())
+		response.HandleDefault(c, response.WithData(res))(&err, recover())
 	}()
 
-	res, err = menuLogic.GetMenuTree(c.Request.Context())
+	res.Tree, err = menuLogic.GetMenuTree(c.Request.Context())
 	if err != nil {
 		return
 	}
